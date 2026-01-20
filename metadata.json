@@ -1,0 +1,5 @@
+{
+  "name": "ArchPrez",
+  "description": "A tiling window manager style presentation application comparing Windows and Linux.",
+  "requestFramePermissions": []
+}
