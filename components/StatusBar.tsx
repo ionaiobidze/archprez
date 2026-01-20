@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Wifi, Battery, Volume2, Clock } from 'lucide-react';
+import { Wifi, Battery, Volume2, Clock, Maximize2, Minimize2 } from 'lucide-react';
 import { SlideData } from '../types';
 
 interface StatusBarProps {
@@ -10,11 +10,28 @@ interface StatusBarProps {
 
 const StatusBar: React.FC<StatusBarProps> = ({ currentSlideId, slides, onSlideChange }) => {
   const [time, setTime] = useState(new Date());
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   return (
     <div className="h-6 bg-black text-xs flex justify-between items-center px-1 select-none font-mono fixed top-0 left-0 w-full z-50">
@@ -61,6 +78,13 @@ const StatusBar: React.FC<StatusBarProps> = ({ currentSlideId, slides, onSlideCh
             <Clock size={12} />
             {time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
          </div>
+         <button
+            onClick={toggleFullscreen}
+            className="px-3 flex items-center gap-2 text-purple-400 hover:bg-[#444] h-full transition-colors"
+            title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+         >
+            {isFullscreen ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
+         </button>
       </div>
     </div>
   );
